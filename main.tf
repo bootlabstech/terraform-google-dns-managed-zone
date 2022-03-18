@@ -2,7 +2,7 @@ resource "google_dns_managed_zone" "zone" {
   name          = var.name
   dns_name      = var.dns_name
   description   = var.description == "" ? null : var.description
-  project       = var.project == "" ? null : var.project
+  project       = var.project
   force_destroy = var.force_destroy
   labels        = length(keys(var.labels)) < 0 ? null : var.labels 
   visibility    = !var.is_private ? "public" : "private"

@@ -7,7 +7,7 @@ resource "google_dns_managed_zone" "zone" {
   labels        = length(keys(var.labels)) < 0 ? null : var.labels 
   visibility    = !var.is_private ? "public" : "private"
 
-  private_visibility_config {
+  dynamic "private_visibility_config" {
     for_each = var.is_private && length(var.private_visibility_config_networks) != 0 ? [1] : []
     content {
       dynamic "networks" {
@@ -19,7 +19,7 @@ resource "google_dns_managed_zone" "zone" {
     }
   }
 
-  forwarding_config {
+  dynamic "forwarding_config" {
     for_each = length(var.forwarding_config_target_name_servers) != 0 ? [1] : []
     content {
       dynamic "target_name_servers" {

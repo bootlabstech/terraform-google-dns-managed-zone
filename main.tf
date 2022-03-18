@@ -8,29 +8,38 @@ resource "google_dns_managed_zone" "zone" {
   visibility    = !var.is_private ? "public" : "private"
 
   private_visibility_config {
-    dynamic "networks" {
-      for_each = var.is_private ? var.private_visibility_config_networks : []
-      content {
-        network_url = networks.value.network_url
+    for_each = var.is_private && length(var.private_visibility_config_networks) != 0 ? [1] : []
+    content {
+      dynamic "networks" {
+        for_each = var.private_visibility_config_networks
+        content {
+          network_url = networks.value
+        }
       }
     }
   }
 
   forwarding_config {
-    dynamic "target_name_servers" {
-      for_each = var.target_name_servers
-      content {
-        ipv4_address = target_name_servers.value.ipv4_address
-        forwarding_path = target_name_servers.value.forwarding_path == null ? "default" : "private"
+    for_each = length(var.forwarding_config_target_name_servers) != 0 ? [1] : []
+    content {
+      dynamic "target_name_servers" {
+        for_each = var.forwarding_config_target_name_servers
+        content {
+          ipv4_address = target_name_servers.value.ipv4_address
+          forwarding_path = target_name_servers.value.forwarding_path == null ? "default" : "private"
+        }
       }
     }
   }
 
-  peering_config {
-    dynamic "target_network" {
-      for_each = var.peering_config_networks
-      content {
-        network_url = networks.value.network_url
+  dynamic "peering_config" {
+    for_each = length(var.peering_config_networks) != 0 ? [1] : []
+    content {
+      dynamic "target_network" {
+        for_each = var.peering_config_networks
+        content {
+          network_url = target_network.value
+        }
       }
     }
   }

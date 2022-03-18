@@ -8,9 +8,8 @@ resource "google_dns_managed_zone" "zone" {
   visibility    = !var.is_private ? "public" : "private"
 
   private_visibility_config {
-    count = var.is_private && length(var.private_visibility_config_networks) != 0 ? 1 : 0
     dynamic "networks" {
-      for_each = var.private_visibility_config_networks
+      for_each = var.is_private ? var.private_visibility_config_networks : []
       content {
         network_url = networks.value.network_url
       }
@@ -18,7 +17,6 @@ resource "google_dns_managed_zone" "zone" {
   }
 
   forwarding_config {
-    count = length(var.target_name_servers) != 0 ? 1 : 0
     dynamic "target_name_servers" {
       for_each = var.target_name_servers
       content {
@@ -29,9 +27,8 @@ resource "google_dns_managed_zone" "zone" {
   }
 
   peering_config {
-    count = length(var.peering_config_networks) != 0 ? 1 : 0
-    dynamic "networks" {
-      for_each = each.peering_config_networks
+    dynamic "target_network" {
+      for_each = var.peering_config_networks
       content {
         network_url = networks.value.network_url
       }

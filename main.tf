@@ -4,7 +4,7 @@ resource "google_dns_managed_zone" "zone" {
   description   = var.description == "" ? null : var.description
   project       = var.project
   force_destroy = var.force_destroy
-  labels        = length(keys(var.labels)) < 0 ? null : var.labels 
+  labels        = length(keys(var.labels)) < 0 ? null : var.labels
   visibility    = !var.is_private ? "public" : "private"
 
   dynamic "private_visibility_config" {
@@ -25,7 +25,7 @@ resource "google_dns_managed_zone" "zone" {
       dynamic "target_name_servers" {
         for_each = var.forwarding_config_target_name_servers
         content {
-          ipv4_address = target_name_servers.value.ipv4_address
+          ipv4_address    = target_name_servers.value.ipv4_address
           forwarding_path = target_name_servers.value.forwarding_path == null ? "default" : "private"
         }
       }
@@ -46,11 +46,11 @@ resource "google_dns_managed_zone" "zone" {
 }
 
 resource "google_dns_record_set" "record" {
-  for_each      = { for record in var.records : record.name => record } 
+  for_each     = { for record in var.records : record.name => record }
   name         = "${each.key}.${google_dns_managed_zone.zone.dns_name}"
+  project      = var.project
   managed_zone = google_dns_managed_zone.zone.name
   type         = each.value.type
   ttl          = each.value.ttl
-
-  rrdatas = each.value.rrdatas
+  rrdatas      = each.value.rrdatas
 }

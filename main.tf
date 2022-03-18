@@ -53,4 +53,8 @@ resource "google_dns_record_set" "record" {
   type         = each.value.type
   ttl          = each.value.ttl
   rrdatas      = each.value.rrdatas
+
+  depends_on = [
+    google_dns_managed_zone.zone
+  ]
 }

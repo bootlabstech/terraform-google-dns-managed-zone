@@ -46,7 +46,7 @@ resource "google_dns_managed_zone" "zone" {
 }
 
 resource "google_dns_record_set" "record" {
-  count = lenght(var.records)
+  count = length(var.records)
   name         = "${var.records[count.index].name}.${google_dns_managed_zone.zone.dns_name}"
   project      = var.project
   managed_zone = google_dns_managed_zone.zone.name

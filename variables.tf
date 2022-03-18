@@ -45,7 +45,7 @@ variable "private_visibility_config_networks" {
 	default = []
 }
 
-variable "target_name_servers" {
+variable "forwarding_config_target_name_servers" {
 	type				= list(any)	
 	description = "List of target name servers to forward to. Cloud DNS will select the best available name server if more than one target is given."
 	default = []

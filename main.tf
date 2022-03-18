@@ -46,13 +46,13 @@ resource "google_dns_managed_zone" "zone" {
 }
 
 resource "google_dns_record_set" "record" {
-  for_each     = { for record in var.records : record.name => record }
-  name         = "${each.key}.${google_dns_managed_zone.zone.dns_name}"
+  count = lenght(var.records)
+  name         = "${var.records[count.index].name}.${google_dns_managed_zone.zone.dns_name}"
   project      = var.project
   managed_zone = google_dns_managed_zone.zone.name
-  type         = each.value.type
-  ttl          = each.value.ttl
-  rrdatas      = each.value.rrdatas
+  type         = var.records[count.index].type
+  ttl          = var.records[count.index].ttl
+  rrdatas      = var.records[count.index].rrdatas
 
   depends_on = [
     google_dns_managed_zone.zone

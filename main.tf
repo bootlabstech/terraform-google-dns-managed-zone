@@ -47,7 +47,8 @@ resource "google_dns_managed_zone" "zone" {
 
 resource "google_dns_record_set" "record" {
   count = length(var.records) #for_each seems to be not working here (The "for_each" value depends on resource attributes that cannot be determined until apply)
-  name         = "${var.records[count.index].name}.${google_dns_managed_zone.zone.dns_name}"
+  //name         = "${var.records[count.index].name}.${google_dns_managed_zone.zone.dns_name}"
+  name         = var.records[count.index].name
   project      = var.project
   managed_zone = google_dns_managed_zone.zone.name
   type         = var.records[count.index].type
